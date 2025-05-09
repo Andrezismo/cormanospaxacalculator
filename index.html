@@ -119,6 +119,19 @@
       margin-top: 15px;
       text-align: center;
     }
+    #translateBtn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 1em;
+      background-color: #FFD700;
+      color: #000;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    #translateBtn:hover {
+      background-color: #e6c200;
+    }
   </style>
 </head>
 <body>
@@ -158,6 +171,8 @@
     </div>
     <div class="signature">by Cormano</div>
   </div>
+
+  <button id="translateBtn">Traduzir para Português</button>
 
   <script>
     const display = document.getElementById('display');
@@ -205,6 +220,7 @@
 
     document.addEventListener('keydown', function(event) {
       const key = event.key;
+
       if (key === 'Backspace') {
         deleteLast();
       } else if (key === 'Enter' || key === '=') {
@@ -216,44 +232,26 @@
       }
     });
 
-    // Tradução automática
-    async function translateText(text, targetLang = 'en') {
-      const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${targetLang}&dt=t&q=${encodeURIComponent(text)}`;
-      const response = await fetch(url);
-      const data = await response.json();
-      return data[0][0][0];
-    }
-
-    async function translatePage(targetLang = 'pt') {
-      const elements = document.querySelectorAll('h1, button, .percentage-result, .signature, label, input[placeholder]');
-      
-      for (const el of elements) {
-        if (el.placeholder) {
-          const translated = await translateText(el.placeholder, targetLang);
-          el.placeholder = translated;
-        } else if (el.innerText.trim()) {
-          const originalText = el.innerText.trim();
-          const translated = await translateText(originalText, targetLang);
-          el.innerText = translated;
+    // Tradução com API gratuita
+    document.getElementById('translateBtn').addEventListener('click', () => {
+      const elements = document.querySelectorAll('h1, button, .percentage-result, .signature, input[placeholder]');
+      elements.forEach(async (el) => {
+        let text = el.innerText || el.placeholder;
+        if (text) {
+          try {
+            const response = await fetch(`https://ftapi.pythonanywhere.com/translate?sl=en&dl=pt&text=${encodeURIComponent(text)}`);
+            const data = await response.json();
+            if (el.placeholder) {
+              el.placeholder = data['destination-text'];
+            } else {
+              el.innerText = data['destination-text'];
+            }
+          } catch (error) {
+            console.error('Erro na tradução:', error);
+          }
         }
-      }
-    }
-
-    // Botão para ativar tradução
-    const langSwitcher = document.createElement('button');
-    langSwitcher.innerText = 'Translate to Portuguese';
-    langSwitcher.style.marginTop = '20px';
-    langSwitcher.style.padding = '10px';
-    langSwitcher.style.borderRadius = '5px';
-    langSwitcher.style.border = 'none';
-    langSwitcher.style.backgroundColor = '#FFD700';
-    langSwitcher.style.color = '#000';
-    langSwitcher.style.fontWeight = 'bold';
-    langSwitcher.style.cursor = 'pointer';
-
-    langSwitcher.onclick = () => translatePage('pt');
-
-    document.body.appendChild(langSwitcher);
+      });
+    });
   </script>
 </body>
 </html>
