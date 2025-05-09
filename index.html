@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -14,7 +14,7 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      min-height: 100vh;
+      height: 100vh;
       margin: 0;
       color: #fff;
     }
@@ -74,30 +74,27 @@
     .btn.equal:hover {
       background-color: #333;
     }
-    .percentage-section, .translation-section {
+    .percentage-section, .translator-section {
       margin-top: 20px;
       padding-top: 20px;
       border-top: 1px solid #FFD700;
     }
-    .percentage-section form, .translation-section form {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .percentage-section .input-group, .translation-section .input-group {
+    .input-group, .language-select {
       display: flex;
       gap: 10px;
       flex-wrap: nowrap;
     }
-    .percentage-section input, .translation-section input, .translation-section select {
+    .percentage-section input, .translator-section textarea, select {
       flex: 1;
       padding: 10px;
       border-radius: 5px;
       border: 1px solid #FFD700;
       font-size: 1em;
       min-width: 0;
+      background-color: #1a1a1a;
+      color: #fff;
     }
-    .percentage-section button, .translation-section button {
+    .percentage-section button, .translator-section button {
       padding: 10px 15px;
       border: none;
       border-radius: 5px;
@@ -146,127 +143,34 @@
       <button class="btn" onclick="appendValue('.')">.</button>
       <button class="btn equal" onclick="calculateResult()">=</button>
     </div>
-
     <div class="percentage-section">
       <form onsubmit="event.preventDefault(); calculatePercentage();">
         <div class="input-group">
-          <input type="number" id="percent" placeholder="Porcentagem (%)" />
-          <input type="number" id="baseValue" placeholder="Valor Base" />
+          <input type="number" id="percent" placeholder="Percentage (%)" />
+          <input type="number" id="baseValue" placeholder="Base Value" />
         </div>
-        <button type="submit">Calcular %</button>
+        <button type="submit">Calculate %</button>
       </form>
       <div id="percentageResult" class="percentage-result"></div>
     </div>
-
-    <div class="translation-section">
-      <form onsubmit="event.preventDefault(); translateText();">
-        <div class="input-group">
-          <input type="text" id="textToTranslate" placeholder="Texto para traduzir" />
-        </div>
-        <div class="input-group">
-          <select id="sourceLang">
-            <option value="pt">Português</option>
-            <option value="en">Inglês</option>
-          </select>
-          <select id="targetLang">
-            <option value="en">Inglês</option>
-            <option value="pt">Português</option>
-          </select>
-        </div>
-        <button type="submit">Traduzir</button>
-      </form>
+    <div class="translator-section">
+      <div class="language-select">
+        <select id="sourceLang">
+          <option value="pt">Português</option>
+          <option value="en" selected>Inglês</option>
+        </select>
+        <select id="targetLang">
+          <option value="en">Inglês</option>
+          <option value="pt">Português</option>
+        </select>
+      </div>
+      <textarea id="textToTranslate" placeholder="Digite o texto para traduzir"></textarea>
+      <button onclick="translateText()">Traduzir</button>
       <div id="translationResult" class="translation-result"></div>
     </div>
-
     <div class="signature">by Cormano</div>
   </div>
-
-  <script>
-    const display = document.getElementById('display');
-
-    function appendValue(val) {
-      if (display.innerText === '0' && val !== '.') {
-        display.innerText = val;
-      } else {
-        display.innerText += val;
-      }
-    }
-
-    function clearDisplay() {
-      display.innerText = '0';
-    }
-
-    function deleteLast() {
-      if (display.innerText.length > 1) {
-        display.innerText = display.innerText.slice(0, -1);
-      } else {
-        display.innerText = '0';
-      }
-    }
-
-    function calculateResult() {
-      try {
-        display.innerText = eval(display.innerText);
-      } catch (e) {
-        display.innerText = 'Erro';
-      }
-    }
-
-    function calculatePercentage() {
-      const percent = parseFloat(document.getElementById('percent').value);
-      const base = parseFloat(document.getElementById('baseValue').value);
-      const resultDisplay = document.getElementById('percentageResult');
-
-      if (!isNaN(percent) && !isNaN(base)) {
-        const result = (percent / 100) * base;
-        resultDisplay.innerText = `${percent}% de ${base} = ${result}`;
-      } else {
-        resultDisplay.innerText = 'Insira valores válidos';
-      }
-    }
-
-    async function translateText() {
-      const text = document.getElementById('textToTranslate').value;
-      const sourceLang = document.getElementById('sourceLang').value;
-      const targetLang = document.getElementById('targetLang').value;
-      const resultDisplay = document.getElementById('translationResult');
-
-      if (!text.trim()) {
-        resultDisplay.innerText = 'Por favor, insira um texto para traduzir.';
-        return;
-      }
-
-      try {
-        const response = await fetch('https://libretranslate.de/translate', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            q: text,
-            source: sourceLang,
-            target: targetLang,
-            format: 'text'
-          })
-        });
-
-        if (!response.ok) {
-          throw new Error('Erro na tradução');
-        }
-
-        const data = await response.json();
-        resultDisplay.innerText = data.translatedText;
-      } catch (error) {
-        resultDisplay.innerText = 'Erro ao traduzir o texto.';
-      }
-    }
-
-    // Adicionando funcionalidade para teclado
-    document.addEventListener('keydown', function(event) {
-      const key = event.key;
-
-      if (key === 'Backspace') {
-        deleteLast();
-      } else if (key === 'Enter' || key === '=') {
-        calculateResult();
-      } else if (key === 'c' ||
-::contentReference[oaicite:12]{index=12}
- 
+  <script src="https://cdn.jsdelivr.net/gh/OpenAI/translate-js/translate.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/OpenAI/translate-js/translate.js"></script>
+</body>
+</html>
