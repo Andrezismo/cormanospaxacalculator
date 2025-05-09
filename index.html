@@ -184,6 +184,11 @@
       const targetLang = document.getElementById('targetLang').value;
       const textToTranslate = document.getElementById('textToTranslate').value;
 
+      console.log("Iniciando tradução..."); // Para debugar
+      console.log("Texto a ser traduzido:", textToTranslate);
+      console.log("Idioma de origem:", sourceLang);
+      console.log("Idioma de destino:", targetLang);
+
       const url = 'https://libretranslate.com/translate';
       const data = {
         q: textToTranslate,
@@ -200,12 +205,14 @@
         });
 
         const result = await res.json();
+        console.log("Resposta da API:", result); // Para debugar
         if (result.translatedText) {
           document.getElementById('translationResult').innerHTML = result.translatedText;
         } else {
           document.getElementById('translationResult').innerText = 'Erro ao traduzir.';
         }
       } catch (error) {
+        console.error("Erro na requisição:", error);
         document.getElementById('translationResult').innerText = 'Erro ao conectar com o serviço de tradução.';
       }
     }
