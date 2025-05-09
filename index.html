@@ -160,8 +160,8 @@
           <option value="pt" selected>Português</option>
         </select>
         <select id="targetLang">
+          <option value="pt-BR">Português (Brasil)</option>
           <option value="it">Italiano</option>
-          <option value="pt">Português</option>
         </select>
       </div>
       <textarea id="textToTranslate" placeholder="Digite o texto para traduzir"></textarea>
@@ -178,7 +178,7 @@
       const targetLang = document.getElementById("targetLang").value;
       const textToTranslate = document.getElementById("textToTranslate").value;
 
-      const res = await fetch("https://libretranslate.com/translate", {
+      const res = await fetch("https://pt.libretranslate.com/translate", {
         method: "POST",
         body: JSON.stringify({
           q: textToTranslate,
@@ -186,6 +186,7 @@
           target: targetLang,
           format: "text",
           alternatives: 3,
+          api_key: ""  // Se necessário, coloque sua chave API aqui
         }),
         headers: { "Content-Type": "application/json" }
       });
@@ -245,11 +246,12 @@
         resultDisplay.innerText = 'Digite valores válidos';
       }
     }
+document.addEventListener('keydown', function(event) {
+const key = event.key;
 
-    document.addEventListener('keydown', function(event) {
-      const key = event.key;
-
-      if (key === 'Backspace') {
-        deleteLast();
-      } else if (key === 'Enter' || key === '=') {
-        calculateResult();
+  if (key === 'Backspace') {
+    deleteLast();
+  } else if (key === 'Enter' || key === '=') {
+    calculateResult();
+  }
+});
