@@ -160,13 +160,14 @@
           <option value="pt" selected>Português</option>
         </select>
         <select id="targetLang">
-          <option value="es">Espanhol</option>
+          <option value="it">Italiano</option>
           <option value="pt">Português</option>
         </select>
       </div>
       <textarea id="textToTranslate" placeholder="Digite o texto para traduzir"></textarea>
       <button onclick="translateText()">Traduzir</button>
       <div id="translationResult" class="translation-result"></div>
+      <div id="alternativeResults" class="translation-result"></div>
     </div>
     <div class="signature">by Cormano</div>
   </div>
@@ -183,16 +184,22 @@
           q: textToTranslate,
           source: sourceLang,
           target: targetLang,
-          format: "text"
+          format: "text",
+          alternatives: 3,
         }),
         headers: { "Content-Type": "application/json" }
       });
 
       const data = await res.json();
+
       if (data.translatedText) {
-        document.getElementById("translationResult").innerText = data.translatedText;
+        document.getElementById("translationResult").innerText = `Tradução: ${data.translatedText}`;
       } else {
         document.getElementById("translationResult").innerText = "Erro ao traduzir.";
+      }
+
+      if (data.alternatives && data.alternatives.length > 0) {
+        document.getElementById("alternativeResults").innerHTML = `Alternativas: ${data.alternatives.join(", ")}`;
       }
     }
 
@@ -246,12 +253,3 @@
         deleteLast();
       } else if (key === 'Enter' || key === '=') {
         calculateResult();
-      } else if (key === 'c' || key === 'C') {
-        clearDisplay();
-      } else if ('0123456789%/*-+.'.includes(key)) {
-        appendValue(key);
-      }
-    });
-  </script>
-</body>
-</html>
