@@ -204,17 +204,19 @@
           headers: { "Content-Type": "application/json" },
         });
 
-        if (!res.ok) {
-          throw new Error(`HTTP error! Status: ${res.status}`);
-        }
-
         const result = await res.json();
         console.log("Resposta da API:", result); // Para debugar
-        if (result.translatedText) {
-          document.getElementById('translationResult').innerHTML = result.translatedText;
+
+        if (res.ok) {
+          if (result.translatedText) {
+            document.getElementById('translationResult').innerHTML = result.translatedText;
+          } else {
+            document.getElementById('translationResult').innerText = 'Erro ao traduzir.';
+          }
         } else {
-          document.getElementById('translationResult').innerText = 'Erro ao traduzir.';
+          document.getElementById('translationResult').innerText = 'Erro na tradução, tente novamente.';
         }
+
       } catch (error) {
         console.error("Erro na requisição:", error);
         document.getElementById('translationResult').innerText = `Erro: ${error.message}`;
@@ -260,8 +262,4 @@
         return;
       }
       const result = (percent / 100) * baseValue;
-      document.getElementById('percentageResult').innerText = `${percent}% de ${baseValue} é ${result}`;
-    }
-  </script>
-</body>
-</html>
+      document.getElementById('
