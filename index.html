@@ -74,27 +74,30 @@
     .btn.equal:hover {
       background-color: #333;
     }
-    .percentage-section, .translator-section {
+    .percentage-section {
       margin-top: 20px;
       padding-top: 20px;
       border-top: 1px solid #FFD700;
     }
-    .input-group, .language-select {
+    .percentage-section form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .percentage-section .input-group {
       display: flex;
       gap: 10px;
       flex-wrap: nowrap;
     }
-    .percentage-section input, .translator-section textarea, select {
+    .percentage-section input {
       flex: 1;
       padding: 10px;
       border-radius: 5px;
       border: 1px solid #FFD700;
       font-size: 1em;
       min-width: 0;
-      background-color: #1a1a1a;
-      color: #fff;
     }
-    .percentage-section button, .translator-section button {
+    .percentage-section button {
       padding: 10px 15px;
       border: none;
       border-radius: 5px;
@@ -103,7 +106,7 @@
       font-weight: bold;
       cursor: pointer;
     }
-    .percentage-result, .translation-result {
+    .percentage-result {
       margin-top: 10px;
       font-size: 1.2em;
       color: #FFD700;
@@ -121,7 +124,6 @@
 <body>
   <h1>PaXaBet Calculator</h1>
   <div class="calculator">
-    <!-- Calculadora -->
     <div id="display" class="display">0</div>
     <div class="buttons">
       <button class="btn" onclick="clearDisplay()">C</button>
@@ -144,8 +146,6 @@
       <button class="btn" onclick="appendValue('.')">.</button>
       <button class="btn equal" onclick="calculateResult()">=</button>
     </div>
-    
-    <!-- Seção de porcentagem -->
     <div class="percentage-section">
       <form onsubmit="event.preventDefault(); calculatePercentage();">
         <div class="input-group">
@@ -156,74 +156,10 @@
       </form>
       <div id="percentageResult" class="percentage-result"></div>
     </div>
-    
-    <!-- Seção de tradução -->
-    <div class="translator-section">
-      <div class="language-select">
-        <select id="sourceLang">
-          <option value="pt">Português</option>
-          <option value="en" selected>Inglês</option>
-        </select>
-        <select id="targetLang">
-          <option value="en">Inglês</option>
-          <option value="pt">Português</option>
-        </select>
-      </div>
-      <textarea id="textToTranslate" placeholder="Digite o texto para traduzir"></textarea>
-      <button onclick="translateText()">Traduzir</button>
-      <div id="translationResult" class="translation-result"></div>
-    </div>
-    
     <div class="signature">by Cormano</div>
   </div>
 
   <script>
-    // Função para traduzir o texto usando o LibreTranslate
-    async function translateText() {
-      const sourceLang = document.getElementById('sourceLang').value;
-      const targetLang = document.getElementById('targetLang').value;
-      const textToTranslate = document.getElementById('textToTranslate').value;
-
-      console.log("Iniciando tradução..."); // Para debugar
-      console.log("Texto a ser traduzido:", textToTranslate);
-      console.log("Idioma de origem:", sourceLang);
-      console.log("Idioma de destino:", targetLang);
-
-      const url = 'https://libretranslate.com/translate';
-      const data = {
-        q: textToTranslate,
-        source: sourceLang,
-        target: targetLang,
-        format: "text" // Mudado para 'text' em vez de 'html'
-      };
-
-      try {
-        const res = await fetch(url, {
-          method: "POST",
-          body: JSON.stringify(data),
-          headers: { "Content-Type": "application/json" },
-        });
-
-        const result = await res.json();
-        console.log("Resposta da API:", result); // Para debugar
-
-        if (res.ok) {
-          if (result.translatedText) {
-            document.getElementById('translationResult').innerText = result.translatedText;
-          } else {
-            document.getElementById('translationResult').innerText = 'Erro ao traduzir.';
-          }
-        } else {
-          document.getElementById('translationResult').innerText = 'Erro na tradução, tente novamente.';
-        }
-
-      } catch (error) {
-        console.error("Erro na requisição:", error);
-        document.getElementById('translationResult').innerText = `Erro: ${error.message}`;
-      }
-    }
-
-    // Funções da calculadora
     const display = document.getElementById('display');
 
     function appendValue(val) {
@@ -248,22 +184,39 @@
 
     function calculateResult() {
       try {
-        display.innerText = eval(display.innerText).toString();
-      } catch {
-        display.innerText = 'Erro';
+        display.innerText = eval(display.innerText);
+      } catch (e) {
+        display.innerText = 'Error';
       }
     }
 
     function calculatePercentage() {
-      const percent = document.getElementById('percent').value;
-      const baseValue = document.getElementById('baseValue').value;
-      if (percent && baseValue) {
-        const result = (parseFloat(percent) / 100) * parseFloat(baseValue);
-        document.getElementById('percentageResult').innerText = `Resultado: ${result}`;
+      const percent = parseFloat(document.getElementById('percent').value);
+      const base = parseFloat(document.getElementById('baseValue').value);
+      const resultDisplay = document.getElementById('percentageResult');
+
+      if (!isNaN(percent) && !isNaN(base)) {
+        const result = (percent / 100) * base;
+        resultDisplay.innerText = `${percent}% of ${base} = ${result}`;
       } else {
-        document.getElementById('percentageResult').innerText = 'Preencha os dois campos!';
+        resultDisplay.innerText = 'Enter valid values';
       }
     }
+
+    // Adicionando funcionalidade para teclado
+    document.addEventListener('keydown', function(event) {
+      const key = event.key;
+
+      if (key === 'Backspace') {
+        deleteLast();
+      } else if (key === 'Enter' || key === '=') {
+        calculateResult();
+      } else if (key === 'c' || key === 'C') {
+        clearDisplay();
+      } else if ('0123456789%/*-+.'.includes(key)) {
+        appendValue(key);
+      }
+    });
   </script>
 </body>
 </html>
