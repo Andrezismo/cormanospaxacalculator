@@ -242,4 +242,28 @@
       if (display.innerText.length > 1) {
         display.innerText = display.innerText.slice(0, -1);
       } else {
-        display.innerText = '
+        display.innerText = '0';
+      }
+    }
+
+    function calculateResult() {
+      try {
+        display.innerText = eval(display.innerText).toString();
+      } catch {
+        display.innerText = 'Erro';
+      }
+    }
+
+    function calculatePercentage() {
+      const percent = document.getElementById('percent').value;
+      const baseValue = document.getElementById('baseValue').value;
+      if (percent && baseValue) {
+        const result = (parseFloat(percent) / 100) * parseFloat(baseValue);
+        document.getElementById('percentageResult').innerText = `Resultado: ${result}`;
+      } else {
+        document.getElementById('percentageResult').innerText = 'Preencha os dois campos!';
+      }
+    }
+  </script>
+</body>
+</html>
