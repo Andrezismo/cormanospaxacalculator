@@ -74,27 +74,30 @@
     .btn.equal:hover {
       background-color: #333;
     }
-    .percentage-section, .translator-section {
+    .percentage-section {
       margin-top: 20px;
       padding-top: 20px;
       border-top: 1px solid #FFD700;
     }
-    .input-group, .language-select {
+    .percentage-section form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .percentage-section .input-group {
       display: flex;
       gap: 10px;
       flex-wrap: nowrap;
     }
-    .percentage-section input, .translator-section textarea, select {
+    .percentage-section input {
       flex: 1;
       padding: 10px;
       border-radius: 5px;
       border: 1px solid #FFD700;
       font-size: 1em;
       min-width: 0;
-      background-color: #1a1a1a;
-      color: #fff;
     }
-    .percentage-section button, .translator-section button {
+    .percentage-section button {
       padding: 10px 15px;
       border: none;
       border-radius: 5px;
@@ -103,7 +106,7 @@
       font-weight: bold;
       cursor: pointer;
     }
-    .percentage-result, .translation-result {
+    .percentage-result {
       margin-top: 10px;
       font-size: 1.2em;
       color: #FFD700;
@@ -153,57 +156,10 @@
       </form>
       <div id="percentageResult" class="percentage-result"></div>
     </div>
-    <div class="translator-section">
-      <div class="language-select">
-        <select id="sourceLang">
-          <option value="en">Inglês</option>
-          <option value="pt" selected>Português</option>
-        </select>
-        <select id="targetLang">
-          <option value="pt-BR">Português (Brasil)</option>
-          <option value="it">Italiano</option>
-        </select>
-      </div>
-      <textarea id="textToTranslate" placeholder="Digite o texto para traduzir"></textarea>
-      <button onclick="translateText()">Traduzir</button>
-      <div id="translationResult" class="translation-result"></div>
-      <div id="alternativeResults" class="translation-result"></div>
-    </div>
     <div class="signature">by Cormano</div>
   </div>
-  
+
   <script>
-    async function translateText() {
-      const sourceLang = document.getElementById("sourceLang").value;
-      const targetLang = document.getElementById("targetLang").value;
-      const textToTranslate = document.getElementById("textToTranslate").value;
-
-      const res = await fetch("https://pt.libretranslate.com/translate", {
-        method: "POST",
-        body: JSON.stringify({
-          q: textToTranslate,
-          source: sourceLang,
-          target: targetLang,
-          format: "text",
-          alternatives: 3,
-          api_key: ""  // Se necessário, coloque sua chave API aqui
-        }),
-        headers: { "Content-Type": "application/json" }
-      });
-
-      const data = await res.json();
-
-      if (data.translatedText) {
-        document.getElementById("translationResult").innerText = `Tradução: ${data.translatedText}`;
-      } else {
-        document.getElementById("translationResult").innerText = "Erro ao traduzir.";
-      }
-
-      if (data.alternatives && data.alternatives.length > 0) {
-        document.getElementById("alternativeResults").innerHTML = `Alternativas: ${data.alternatives.join(", ")}`;
-      }
-    }
-
     const display = document.getElementById('display');
 
     function appendValue(val) {
@@ -241,17 +197,26 @@
 
       if (!isNaN(percent) && !isNaN(base)) {
         const result = (percent / 100) * base;
-        resultDisplay.innerText = `${percent}% de ${base} = ${result}`;
+        resultDisplay.innerText = `${percent}% of ${base} = ${result}`;
       } else {
-        resultDisplay.innerText = 'Digite valores válidos';
+        resultDisplay.innerText = 'Enter valid values';
       }
     }
-document.addEventListener('keydown', function(event) {
-const key = event.key;
 
-  if (key === 'Backspace') {
-    deleteLast();
-  } else if (key === 'Enter' || key === '=') {
-    calculateResult();
-  }
-});
+    // Adicionando funcionalidade para teclado
+    document.addEventListener('keydown', function(event) {
+      const key = event.key;
+
+      if (key === 'Backspace') {
+        deleteLast();
+      } else if (key === 'Enter' || key === '=') {
+        calculateResult();
+      } else if (key === 'c' || key === 'C') {
+        clearDisplay();
+      } else if ('0123456789%/*-+.'.includes(key)) {
+        appendValue(key);
+      }
+    });
+  </script>
+</body>
+</html>
