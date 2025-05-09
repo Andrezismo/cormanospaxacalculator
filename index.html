@@ -194,7 +194,7 @@
         q: textToTranslate,
         source: sourceLang,
         target: targetLang,
-        format: "html"
+        format: "text" // Mudado para 'text' em vez de 'html'
       };
 
       try {
@@ -209,7 +209,7 @@
 
         if (res.ok) {
           if (result.translatedText) {
-            document.getElementById('translationResult').innerHTML = result.translatedText;
+            document.getElementById('translationResult').innerText = result.translatedText;
           } else {
             document.getElementById('translationResult').innerText = 'Erro ao traduzir.';
           }
@@ -242,24 +242,4 @@
       if (display.innerText.length > 1) {
         display.innerText = display.innerText.slice(0, -1);
       } else {
-        display.innerText = '0';
-      }
-    }
-
-    function calculateResult() {
-      try {
-        display.innerText = eval(display.innerText);
-      } catch (e) {
-        display.innerText = 'Erro';
-      }
-    }
-
-    function calculatePercentage() {
-      const percent = parseFloat(document.getElementById('percent').value);
-      const baseValue = parseFloat(document.getElementById('baseValue').value);
-      if (isNaN(percent) || isNaN(baseValue)) {
-        document.getElementById('percentageResult').innerText = 'Valores inválidos.';
-        return;
-      }
-      const result = (percent / 100) * baseValue;
-      document.getElementById('
+        display.innerText = '
