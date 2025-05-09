@@ -202,6 +202,21 @@
         resultDisplay.innerText = 'Enter valid values';
       }
     }
+
+    // Adicionando funcionalidade para teclado
+    document.addEventListener('keydown', function(event) {
+      const key = event.key;
+
+      if (key === 'Backspace') {
+        deleteLast();
+      } else if (key === 'Enter' || key === '=') {
+        calculateResult();
+      } else if (key === 'c' || key === 'C') {
+        clearDisplay();
+      } else if ('0123456789%/*-+.'.includes(key)) {
+        appendValue(key);
+      }
+    });
   </script>
 </body>
 </html>
