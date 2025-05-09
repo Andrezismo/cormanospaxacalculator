@@ -204,6 +204,10 @@
           headers: { "Content-Type": "application/json" },
         });
 
+        if (!res.ok) {
+          throw new Error(`HTTP error! Status: ${res.status}`);
+        }
+
         const result = await res.json();
         console.log("Resposta da API:", result); // Para debugar
         if (result.translatedText) {
@@ -213,7 +217,7 @@
         }
       } catch (error) {
         console.error("Erro na requisição:", error);
-        document.getElementById('translationResult').innerText = 'Erro ao conectar com o serviço de tradução.';
+        document.getElementById('translationResult').innerText = `Erro: ${error.message}`;
       }
     }
 
@@ -244,21 +248,19 @@
       try {
         display.innerText = eval(display.innerText);
       } catch (e) {
-        display.innerText = 'Error';
+        display.innerText = 'Erro';
       }
     }
 
     function calculatePercentage() {
       const percent = parseFloat(document.getElementById('percent').value);
-      const base = parseFloat(document.getElementById('baseValue').value);
-      const resultDisplay = document.getElementById('percentageResult');
-
-      if (!isNaN(percent) && !isNaN(base)) {
-        const result = (percent / 100) * base;
-        resultDisplay.innerText = `${percent}% of ${base} = ${result}`;
-      } else {
-        resultDisplay.innerText = 'Enter valid values';
+      const baseValue = parseFloat(document.getElementById('baseValue').value);
+      if (isNaN(percent) || isNaN(baseValue)) {
+        document.getElementById('percentageResult').innerText = 'Valores inválidos.';
+        return;
       }
+      const result = (percent / 100) * baseValue;
+      document.getElementById('percentageResult').innerText = `${percent}% de ${baseValue} é ${result}`;
     }
   </script>
 </body>
