@@ -170,7 +170,75 @@
     </div>
     <div class="signature">by Cormano</div>
   </div>
-  <script src="https://cdn.jsdelivr.net/gh/OpenAI/translate-js/translate.js"></script>
-  <script src="https://cdn.jsdelivr.net/gh/OpenAI/translate-js/translate.js"></script>
+
+  <script>
+    const display = document.getElementById('display');
+
+    function appendValue(val) {
+      if (display.innerText === '0' && val !== '.') {
+        display.innerText = val;
+      } else {
+        display.innerText += val;
+      }
+    }
+
+    function clearDisplay() {
+      display.innerText = '0';
+    }
+
+    function deleteLast() {
+      if (display.innerText.length > 1) {
+        display.innerText = display.innerText.slice(0, -1);
+      } else {
+        display.innerText = '0';
+      }
+    }
+
+    function calculateResult() {
+      try {
+        display.innerText = eval(display.innerText);
+      } catch (e) {
+        display.innerText = 'Error';
+      }
+    }
+
+    function calculatePercentage() {
+      const percent = parseFloat(document.getElementById('percent').value);
+      const base = parseFloat(document.getElementById('baseValue').value);
+      const resultDisplay = document.getElementById('percentageResult');
+
+      if (!isNaN(percent) && !isNaN(base)) {
+        const result = (percent / 100) * base;
+        resultDisplay.innerText = `${percent}% of ${base} = ${result}`;
+      } else {
+        resultDisplay.innerText = 'Enter valid values';
+      }
+    }
+
+    function translateText() {
+      const sourceLang = document.getElementById('sourceLang').value;
+      const targetLang = document.getElementById('targetLang').value;
+      const textToTranslate = document.getElementById('textToTranslate').value;
+      const resultDisplay = document.getElementById('translationResult');
+
+      // Simple translation mockup (you can replace it with an API or real translation logic)
+      resultDisplay.innerText = `Translated (${sourceLang} to ${targetLang}): ${textToTranslate}`;
+    }
+
+    // Adicionando funcionalidade para teclado
+    document.addEventListener('keydown', function(event) {
+      const key = event.key;
+
+      if (key === 'Backspace') {
+        deleteLast();
+      } else if (key === 'Enter' || key === '=') {
+        calculateResult();
+      } else if (key === 'c' || key === 'C') {
+        clearDisplay();
+      } else if ('0123456789%/*-+.'.includes(key)) {
+        appendValue(key);
+      }
+    });
+  </script>
 </body>
 </html>
