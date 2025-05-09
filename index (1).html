@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PaXaBet Calculator</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #000;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      color: #fff;
+    }
+    h1 {
+      color: #FFD700;
+      margin-bottom: 20px;
+      font-size: 2.5em;
+    }
+    .calculator {
+      background-color: #1a1a1a;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 15px 30px rgba(255, 215, 0, 0.3);
+      width: 320px;
+    }
+    .display {
+      background-color: #000;
+      color: #fff;
+      font-size: 2em;
+      text-align: right;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      word-wrap: break-word;
+      border: 2px solid #FFD700;
+    }
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+    }
+    .btn {
+      padding: 20px;
+      font-size: 1.2em;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      background-color: #FFD700;
+      color: #000;
+      transition: background 0.3s;
+    }
+    .btn:hover {
+      background-color: #e6c200;
+    }
+    .btn.operator {
+      background-color: #fff;
+      color: #000;
+    }
+    .btn.operator:hover {
+      background-color: #ccc;
+    }
+    .btn.equal {
+      background-color: #000;
+      color: #FFD700;
+      border: 2px solid #FFD700;
+    }
+    .btn.equal:hover {
+      background-color: #333;
+    }
+    .percentage-section {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid #FFD700;
+    }
+    .percentage-section form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .percentage-section .input-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: nowrap;
+    }
+    .percentage-section input {
+      flex: 1;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #FFD700;
+      font-size: 1em;
+      min-width: 0;
+    }
+    .percentage-section button {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      background-color: #FFD700;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .percentage-result {
+      margin-top: 10px;
+      font-size: 1.2em;
+      color: #FFD700;
+      text-align: center;
+    }
+    .signature {
+      font-family: 'Press Start 2P', cursive;
+      font-size: 10px;
+      color: gray;
+      margin-top: 15px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>PaXaBet Calculator</h1>
+  <div class="calculator">
+    <div id="display" class="display">0</div>
+    <div class="buttons">
+      <button class="btn" onclick="clearDisplay()">C</button>
+      <button class="btn" onclick="appendValue('%')">%</button>
+      <button class="btn" onclick="deleteLast()">DEL</button>
+      <button class="btn operator" onclick="appendValue('/')">/</button>
+      <button class="btn" onclick="appendValue('7')">7</button>
+      <button class="btn" onclick="appendValue('8')">8</button>
+      <button class="btn" onclick="appendValue('9')">9</button>
+      <button class="btn operator" onclick="appendValue('*')">*</button>
+      <button class="btn" onclick="appendValue('4')">4</button>
+      <button class="btn" onclick="appendValue('5')">5</button>
+      <button class="btn" onclick="appendValue('6')">6</button>
+      <button class="btn operator" onclick="appendValue('-')">-</button>
+      <button class="btn" onclick="appendValue('1')">1</button>
+      <button class="btn" onclick="appendValue('2')">2</button>
+      <button class="btn" onclick="appendValue('3')">3</button>
+      <button class="btn operator" onclick="appendValue('+')">+</button>
+      <button class="btn" onclick="appendValue('0')">0</button>
+      <button class="btn" onclick="appendValue('.')">.</button>
+      <button class="btn equal" onclick="calculateResult()">=</button>
+    </div>
+    <div class="percentage-section">
+      <form onsubmit="event.preventDefault(); calculatePercentage();">
+        <div class="input-group">
+          <input type="number" id="percent" placeholder="Percentage (%)" />
+          <input type="number" id="baseValue" placeholder="Base Value" />
+        </div>
+        <button type="submit">Calculate %</button>
+      </form>
+      <div id="percentageResult" class="percentage-result"></div>
+    </div>
+    <div class="signature">by Cormano</div>
+  </div>
+
+  <script>
+    const display = document.getElementById('display');
+
+    function appendValue(val) {
+      if (display.innerText === '0' && val !== '.') {
+        display.innerText = val;
+      } else {
+        display.innerText += val;
+      }
+    }
+
+    function clearDisplay() {
+      display.innerText = '0';
+    }
+
+    function deleteLast() {
+      if (display.innerText.length > 1) {
+        display.innerText = display.innerText.slice(0, -1);
+      } else {
+        display.innerText = '0';
+      }
+    }
+
+    function calculateResult() {
+      try {
+        display.innerText = eval(display.innerText);
+      } catch (e) {
+        display.innerText = 'Error';
+      }
+    }
+
+    function calculatePercentage() {
+      const percent = parseFloat(document.getElementById('percent').value);
+      const base = parseFloat(document.getElementById('baseValue').value);
+      const resultDisplay = document.getElementById('percentageResult');
+
+      if (!isNaN(percent) && !isNaN(base)) {
+        const result = (percent / 100) * base;
+        resultDisplay.innerText = `${percent}% of ${base} = ${result}`;
+      } else {
+        resultDisplay.innerText = 'Enter valid values';
+      }
+    }
+  </script>
+</body>
+</html>
