@@ -3,33 +3,40 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PaXaBet Calculator</title>
+  <title>PaXa Tools</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
 
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: #000;
+      color: #fff;
+      margin: 0;
+      padding: 40px 20px;
       display: flex;
       flex-direction: column;
-      justify-content: center;
       align-items: center;
-      height: 100vh;
-      margin: 0;
-      color: #fff;
     }
+
     h1 {
       color: #FFD700;
-      margin-bottom: 20px;
       font-size: 2.5em;
+      margin-bottom: 20px;
+      text-align: center;
     }
-    .calculator {
+
+    .section {
       background-color: #1a1a1a;
       padding: 30px;
       border-radius: 20px;
       box-shadow: 0 15px 30px rgba(255, 215, 0, 0.3);
-      width: 320px;
+      width: 100%;
+      max-width: 700px;
+      margin-bottom: 40px;
     }
+
+    /* Calculator styles */
     .display {
       background-color: #000;
       color: #fff;
@@ -38,14 +45,15 @@
       padding: 20px;
       border-radius: 10px;
       margin-bottom: 20px;
-      word-wrap: break-word;
       border: 2px solid #FFD700;
     }
+
     .buttons {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 15px;
     }
+
     .btn {
       padding: 20px;
       font-size: 1.2em;
@@ -56,49 +64,62 @@
       color: #000;
       transition: background 0.3s;
     }
+
     .btn:hover {
       background-color: #e6c200;
     }
+
     .btn.operator {
       background-color: #fff;
       color: #000;
     }
+
     .btn.operator:hover {
       background-color: #ccc;
     }
+
     .btn.equal {
       background-color: #000;
       color: #FFD700;
       border: 2px solid #FFD700;
     }
+
     .btn.equal:hover {
       background-color: #333;
     }
+
     .percentage-section {
       margin-top: 20px;
-      padding-top: 20px;
       border-top: 1px solid #FFD700;
+      padding-top: 20px;
     }
+
     .percentage-section form {
       display: flex;
       flex-direction: column;
       gap: 10px;
     }
-    .percentage-section .input-group {
+
+    .input-group {
       display: flex;
       gap: 10px;
-      flex-wrap: nowrap;
     }
-    .percentage-section input {
+
+    .percentage-section input,
+    .checker-section input {
       flex: 1;
       padding: 10px;
       border-radius: 5px;
       border: 1px solid #FFD700;
       font-size: 1em;
-      min-width: 0;
+      width: 100%;
+      background-color: #111;
+      color: #fff;
     }
-    .percentage-section button {
-      padding: 10px 15px;
+
+    .percentage-section button,
+    .checker-section button {
+      padding: 10px;
       border: none;
       border-radius: 5px;
       background-color: #FFD700;
@@ -106,12 +127,36 @@
       font-weight: bold;
       cursor: pointer;
     }
-    .percentage-result {
+
+    .percentage-result, .highlight {
       margin-top: 10px;
       font-size: 1.2em;
       color: #FFD700;
       text-align: center;
     }
+
+    /* Checker styles */
+    label {
+      display: block;
+      margin: 20px 0 10px;
+      font-size: 1rem;
+      color: #fff;
+    }
+
+    .checker-section button {
+      margin-top: 20px;
+    }
+
+    #result {
+      margin-top: 20px;
+      padding: 20px;
+      background-color: #111;
+      border: 2px solid #fff200;
+      border-radius: 10px;
+      text-shadow: 0 0 5px #fff;
+      white-space: pre-wrap;
+    }
+
     .signature {
       font-family: 'Press Start 2P', cursive;
       font-size: 10px;
@@ -119,11 +164,23 @@
       margin-top: 15px;
       text-align: center;
     }
+
+    @keyframes sadFace {
+      0% { transform: rotate(0deg); }
+      50% { transform: rotate(-20deg); }
+      100% { transform: rotate(0deg); }
+    }
+
+    @keyframes happyFace {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
   </style>
 </head>
 <body>
-  <h1>PaXaBet Calculator</h1>
-  <div class="calculator">
+  <div class="section">
+    <h1>PaXaBet Calculator</h1>
     <div id="display" class="display">0</div>
     <div class="buttons">
       <button class="btn" onclick="clearDisplay()">C</button>
@@ -159,6 +216,20 @@
     <div class="signature">by Cormano</div>
   </div>
 
+  <div class="section checker-section">
+    <h1>✩ PaXa Wheel Code Checker ✩</h1>
+
+    <label for="depositTime">Last Deposit Time (GMT+5 - Maldives):</label>
+    <input type="datetime-local" id="depositTime" />
+
+    <label for="wheelTime">Time Code Was Applied on Wheel (GMT+3 - Turkey):</label>
+    <input type="datetime-local" id="wheelTime" />
+
+    <button onclick="checkEligibility()">Check Now</button>
+
+    <div id="result"></div>
+  </div>
+
   <script>
     const display = document.getElementById('display');
 
@@ -175,17 +246,13 @@
     }
 
     function deleteLast() {
-      if (display.innerText.length > 1) {
-        display.innerText = display.innerText.slice(0, -1);
-      } else {
-        display.innerText = '0';
-      }
+      display.innerText = display.innerText.length > 1 ? display.innerText.slice(0, -1) : '0';
     }
 
     function calculateResult() {
       try {
         display.innerText = eval(display.innerText);
-      } catch (e) {
+      } catch {
         display.innerText = 'Error';
       }
     }
@@ -203,19 +270,45 @@
       }
     }
 
-    // Adicionando funcionalidade para teclado
+    function checkEligibility() {
+      const depositInput = document.getElementById("depositTime").value;
+      const wheelInput = document.getElementById("wheelTime").value;
+      const result = document.getElementById("result");
+
+      if (!depositInput || !wheelInput) {
+        result.innerHTML = "<span class='highlight'>Please fill in both the deposit time and the code time.</span>";
+        return;
+      }
+
+      const depositGMT5 = new Date(depositInput);
+      const depositGMT3 = new Date(depositGMT5.getTime() - 2 * 60 * 60 * 1000);
+      const wheelTime = new Date(wheelInput);
+
+      if (wheelTime >= depositGMT3) {
+        result.innerHTML = `
+          <p><span class='highlight'>❌ Code already generated for this deposit.</span></p>
+          <pre class="highlight" style="animation: sadFace 1s infinite;">(╯︵╰,)</pre>
+          <p>Deposit time (GMT+5): ${depositGMT5.toLocaleString()}</p>
+          <p>Converted to GMT+3: ${depositGMT3.toLocaleString()}</p>
+          <p>Wheel code time (GMT+3): ${wheelTime.toLocaleString()}</p>
+        `;
+      } else {
+        result.innerHTML = `
+          <p><span class='highlight'>✅ Eligible to generate a new code.</span></p>
+          <pre class="highlight" style="animation: happyFace 1s infinite;">(｡♥‿♥｡)</pre>
+          <p>Deposit time (GMT+5): ${depositGMT5.toLocaleString()}</p>
+          <p>Converted to GMT+3: ${depositGMT3.toLocaleString()}</p>
+          <p>Wheel code time (GMT+3): ${wheelTime.toLocaleString()}</p>
+        `;
+      }
+    }
+
     document.addEventListener('keydown', function(event) {
       const key = event.key;
-
-      if (key === 'Backspace') {
-        deleteLast();
-      } else if (key === 'Enter' || key === '=') {
-        calculateResult();
-      } else if (key === 'c' || key === 'C') {
-        clearDisplay();
-      } else if ('0123456789%/*-+.'.includes(key)) {
-        appendValue(key);
-      }
+      if (key === 'Backspace') deleteLast();
+      else if (key === 'Enter' || key === '=') calculateResult();
+      else if (key.toLowerCase() === 'c') clearDisplay();
+      else if ('0123456789%/*-+.'.includes(key)) appendValue(key);
     });
   </script>
 </body>
